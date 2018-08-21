@@ -1,0 +1,3 @@
+module Spendthrift
+  VERSION = "0.1.0"
+end
