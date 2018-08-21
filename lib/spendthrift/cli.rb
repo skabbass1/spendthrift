@@ -1,6 +1,8 @@
 require 'optparse'
 require 'optparse/date'
 require 'date'
+require 'json'
+
 require_relative 'plaid_client'
 
 options = {}
@@ -28,11 +30,27 @@ when 'transactions'
   p = PlaidGateway::PlaidClient.new
   t = p.get_all_transactions start_date:start_date, end_date:end_date
 
-  table = {}
+  table = Hash.new {|hash, key| hash[key] = []}
+
 
   t.each do |item|
-    
   end
+
+when 'test'
+  contents = File.read('transactions.json')
+  transactions = JSON.parse(contents)
+
+  table = Hash.new {|hash, key| hash[key] =[]}
+  transactions.each do |item|
+    item.each {|key, value| table[key].push(value)}
+  end
+
+
+
+
+
+
+
 
 
 
