@@ -4,9 +4,11 @@ require 'date'
 module Spendthrift
   module PlaidGateway
 
-    class CredentialsError < StandardError;
+    class CredentialsError < StandardError
     end
-    class AccountAccessTokensError < StandardError;
+
+
+    class AccountAccessTokensError < StandardError
     end
 
     class PlaidClient

@@ -102,4 +102,91 @@ RSpec.describe Spendthrift::PlaidGateway::PlaidClient do
   end
 
 
+  describe '#get_savings_accounts' do
+    before :each do
+      @access_tokens = ENV.delete 'PLAID_ACCESS_TOKENS'
+      ENV['PLAID_ACCESS_TOKENS'] = 'test'
+    end
+
+
+    it 'only returns savings accounts' do
+
+      test_data = {
+          accounts: [{
+                         account_id: '123',
+                         type: 'credit',
+                         subtype: 'credit card'
+                     },
+
+                     {
+                         account_id: '456',
+                         type: 'depository',
+                         subtype: 'savings'
+                     },
+                     {
+                         account_id: '789',
+                         type: 'depository',
+                         subtype: 'checking'
+                     },
+          ]
+      }
+
+      allow_any_instance_of(Plaid::Accounts).to receive(:get).and_return(test_data)
+      client = Spendthrift::PlaidGateway::PlaidClient.new
+      accounts = client.get_savings_accounts
+
+      expect(accounts.length).to eq 1
+      expect(accounts.first[:accounts].first[:account_id]).to eq '456'
+    end
+
+
+    after :each do
+      ENV['PLAID_ACCESS_TOKENS'] = @access_tokens
+    end
+  end
+
+  describe '#get_checking_accounts' do
+    before :each do
+      @access_tokens = ENV.delete 'PLAID_ACCESS_TOKENS'
+      ENV['PLAID_ACCESS_TOKENS'] = 'test'
+    end
+
+
+    it 'only returns checking accounts' do
+
+      test_data = {
+          accounts: [{
+                         account_id: '123',
+                         type: 'credit',
+                         subtype: 'credit card'
+                     },
+
+                     {
+                         account_id: '456',
+                         type: 'depository',
+                         subtype: 'savings'
+                     },
+                     {
+                         account_id: '789',
+                         type: 'depository',
+                         subtype: 'checking'
+                     },
+          ]
+      }
+
+      allow_any_instance_of(Plaid::Accounts).to receive(:get).and_return(test_data)
+      client = Spendthrift::PlaidGateway::PlaidClient.new
+      accounts = client.get_checking_accounts
+
+      expect(accounts.length).to eq 1
+      expect(accounts.first[:accounts].first[:account_id]).to eq '789'
+    end
+
+
+    after :each do
+      ENV['PLAID_ACCESS_TOKENS'] = @access_tokens
+    end
+  end
+
+
 end
