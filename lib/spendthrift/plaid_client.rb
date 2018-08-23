@@ -103,7 +103,6 @@ module Spendthrift
 
 
       def get_accounts_by_type(type, subtype)
-        byebug
         @access_tokens.map do |token|
           response = @client.accounts.get token
           {
