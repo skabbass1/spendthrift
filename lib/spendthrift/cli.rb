@@ -28,7 +28,7 @@ when 'transactions'
   start_date = options.key?(:start_date) ? options[:start_date] : Date.today
   end_date = options.key(:end_date) ? options[:end_date] : Date.today
   p = PlaidGateway::PlaidClient.new
-  t = p.get_all_transactions start_date: start_date, end_date: end_date
+  t = p.get_transactions start_date: start_date, end_date: end_date
 
   table = Hash.new {|hash, key| hash[key] = []}
 

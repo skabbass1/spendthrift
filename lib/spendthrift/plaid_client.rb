@@ -2,6 +2,8 @@ require 'plaid'
 require 'date'
 
 module Spendthrift
+
+
   module PlaidGateway
 
     class CredentialsError < StandardError
@@ -11,52 +13,44 @@ module Spendthrift
     class AccountAccessTokensError < StandardError
     end
 
+    class AccountTypeError < StandardError
+    end
+
     class PlaidClient
+
+
+      attr_reader :raw_client
 
 
       def initialize
 
 
         client_id, secret, public_key = load_credentials_from_env
-        @client = Plaid::Client.new(env: :development,
-                                    client_id: client_id,
-                                    secret: secret,
-                                    public_key: public_key)
+        @raw_client = Plaid::Client.new(env: :development,
+                                        client_id: client_id,
+                                        secret: secret,
+                                        public_key: public_key)
 
         @access_tokens = load_access_tokens_from_env
-
 
       end
 
 
-      def get_all_transactions(start_date:, end_date:)
+      def get_account_transactions(start_date:, end_date:, account_type:)
+        case account_type
 
-        all_transactions = []
-        credit_card_accounts = get_credit_card_accounts
+        when :credit
+          @accounts = get_credit_card_accounts
+        when :checking
+          @accounts = get_checking_accounts
+        when :savings
+          @accounts = get_savings_accounts
 
-        credit_card_accounts.each do |key_accounts_pair|
-
-          account_ids = key_accounts_pair[:accounts].map {|account| account[:account_id]}
-
-          transaction_response = @client.transactions.get(key_accounts_pair[:access_token],
-                                                          start_date,
-                                                          end_date,
-                                                          account_ids: account_ids)
-          transactions = transaction_response.transactions
-
-          while transactions.length < transaction_response['total_transactions']
-            transaction_response = @client.transactions.get(key_accounts_pair[:access_token],
-                                                            start_date,
-                                                            end_date,
-                                                            account_ids: account_ids,
-                                                            offset: transactions.length)
-            transactions += transaction_response.transactions
-          end
-          all_transactions.concat transactions
-
+        else
+          raise AccountTypeError.new("account type #{account_type} not known. Use one of ['credit', 'savings', 'checking']")
         end
 
-        all_transactions
+        get_transactions start_date: start_date, end_date: end_date, accounts: @accounts
 
       end
 
@@ -106,12 +100,72 @@ module Spendthrift
 
       def get_accounts_by_type(type, subtype)
         @access_tokens.map do |token|
-          response = @client.accounts.get token
+          response = @raw_client.accounts.get token
           {
               access_token: token,
               accounts: response[:accounts].select {|account| account[:type] == type && account[:subtype] == subtype}
           }
         end
+      end
+
+
+      def get_transactions(start_date:, end_date:, accounts:)
+
+        all_transactions = []
+
+        accounts.each do |key_accounts_pair|
+
+          account_ids = key_accounts_pair[:accounts].map {|account| account[:account_id]}
+
+          transaction_response = @raw_client.transactions.get(key_accounts_pair[:access_token],
+                                                              start_date,
+                                                              end_date,
+                                                              account_ids: account_ids)
+          transactions = transaction_response.transactions
+
+          while transactions.length < transaction_response['total_transactions']
+            transaction_response = @raw_client.transactions.get(key_accounts_pair[:access_token],
+                                                                start_date,
+                                                                end_date,
+                                                                account_ids: account_ids,
+                                                                offset: transactions.length)
+            transactions += transaction_response.transactions
+          end
+          all_transactions.concat transactions
+
+        end
+
+        sanitize all_transactions
+
+      end
+
+
+      def sanitize(transactions)
+        transactions = remove_pending_transactions transactions
+        remove_payments_and_refunds transactions
+        remove_unneeded_attributes transactions
+        combine_categories! transactions
+
+      end
+
+
+      def remove_pending_transactions(transactions)
+        transactions.select {|t| !t[:pending]}
+      end
+
+
+      def remove_payments_and_refunds(transactions)
+        transactions.select {|t| t[:amount] > 0}
+      end
+
+
+      def combine_categories!(transactions)
+        transactions.each {|t| t[:category] = t[:category].join '-'}
+      end
+
+
+      def remove_unneeded_attributes(transactions)
+        transactions.map {|t| {date: t[:date], amount: t[:amount], category: t[:category], vendor: t[:name]}}
       end
 
 
