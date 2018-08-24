@@ -1,67 +1,51 @@
 require 'spec_helper'
 
+
 RSpec.describe Spendthrift::PlaidGateway::PlaidClient do
+
+
   describe '#new' do
-    before :each do
-      @client_id = ENV.delete 'PLAID_CLIENT_ID'
-      @secret = ENV.delete 'PLAID_SECRET'
-      @public_key = ENV.delete 'PLAID_PUBLIC_KEY'
-      @access_tokens = ENV.delete 'PLAID_ACCESS_TOKENS'
-      ENV['PLAID_ACCESS_TOKENS'] = 'test'
+    before :example do
+      clear_env
     end
 
 
-    context 'when client instantiated without valid credentials in environment' do
+    context 'when client instantiated with access tokens but no login credentials' do
       it 'raises CredentialsError' do
+
+        ENV['PLAID_ACCESS_TOKENS'] = 'test'
+
         expect {Spendthrift::PlaidGateway::PlaidClient.new}
             .to raise_error Spendthrift::PlaidGateway::CredentialsError
       end
     end
 
 
-    after :each do
-      ENV['PLAID_CLIENT_ID'] = @client_id
-      ENV['PLAID_SECRET'] = @secret
-      ENV['PLAID_PUBLIC_KEY'] = @public_key
-      ENV['PLAID_ACCESS_TOKENS'] = @access_tokens
-    end
-  end
-
-  describe '#new' do
-    before :each do
-      @client_id = ENV.delete 'PLAID_CLIENT_ID'
-      @secret = ENV.delete 'PLAID_SECRET'
-      @public_key = ENV.delete 'PLAID_PUBLIC_KEY'
-      @access_tokens = ENV.delete 'PLAID_ACCESS_TOKENS'
-
-      ENV['PLAID_CLIENT_ID'] = 'test'
-      ENV['PLAID_SECRET'] = 'test'
-      ENV['PLAID_PUBLIC_KEY'] = 'test'
-    end
-
-
-    context 'when client instantiated without access tokens in environment' do
+    context 'when client instantiated with credentials but without access tokens' do
       it 'raises AccountAccessTokensError' do
+
+        ENV['PLAID_CLIENT_ID'] = 'test'
+        ENV['PLAID_SECRET'] = 'test'
+        ENV['PLAID_PUBLIC_KEY'] = 'test'
+
         expect {Spendthrift::PlaidGateway::PlaidClient.new}
             .to raise_error Spendthrift::PlaidGateway::AccountAccessTokensError
       end
     end
 
 
-    after :each do
-      ENV['PLAID_CLIENT_ID'] = @client_id
-      ENV['PLAID_SECRET'] = @secret
-      ENV['PLAID_PUBLIC_KEY'] = @public_key
-      ENV['PLAID_ACCESS_TOKENS'] = @access_tokens
-
+    after :example do
+      restore_env
     end
   end
 
 
   describe '#get_credit_card_accounts' do
-    before :each do
-      @access_tokens = ENV.delete 'PLAID_ACCESS_TOKENS'
-      ENV['PLAID_ACCESS_TOKENS'] = 'test'
+
+
+    before :example do
+      clear_env
+      prepare_env
     end
 
 
@@ -97,15 +81,17 @@ RSpec.describe Spendthrift::PlaidGateway::PlaidClient do
 
 
     after :each do
-      ENV['PLAID_ACCESS_TOKENS'] = @access_tokens
+      restore_env
     end
   end
 
 
   describe '#get_savings_accounts' do
+
+
     before :each do
-      @access_tokens = ENV.delete 'PLAID_ACCESS_TOKENS'
-      ENV['PLAID_ACCESS_TOKENS'] = 'test'
+      clear_env
+      prepare_env
     end
 
 
@@ -141,14 +127,16 @@ RSpec.describe Spendthrift::PlaidGateway::PlaidClient do
 
 
     after :each do
-      ENV['PLAID_ACCESS_TOKENS'] = @access_tokens
+      restore_env
     end
   end
 
   describe '#get_checking_accounts' do
+
+
     before :each do
-      @access_tokens = ENV.delete 'PLAID_ACCESS_TOKENS'
-      ENV['PLAID_ACCESS_TOKENS'] = 'test'
+      clear_env
+      prepare_env
     end
 
 
@@ -186,6 +174,36 @@ RSpec.describe Spendthrift::PlaidGateway::PlaidClient do
     after :each do
       ENV['PLAID_ACCESS_TOKENS'] = @access_tokens
     end
+  end
+
+
+  def prepare_env
+    ENV['PLAID_CLIENT_ID'] = 'test'
+    ENV['PLAID_SECRET'] = 'test'
+    ENV['PLAID_PUBLIC_KEY'] = 'test'
+    ENV['PLAID_ACCESS_TOKENS'] = 'test'
+  end
+
+
+  def clear_env
+    ENV['keep_PLAID_CLIENT_ID'] = ENV.delete 'PLAID_CLIENT_ID'
+    ENV['keep_PLAID_SECRET'] = ENV.delete 'PLAID_SECRET'
+    ENV['keep_PLAID_PUBLIC_KEY'] = ENV.delete 'PLAID_PUBLIC_KEY'
+    ENV['keep_PLAID_ACCESS_TOKENS'] = ENV.delete 'PLAID_ACCESS_TOKENS'
+
+  end
+
+
+  def restore_env
+    ENV['PLAID_CLIENT_ID'] = ENV['keep_PLAID_CLIENT_ID']
+    ENV['PLAID_SECRET'] = ENV['keep_PLAID_SECRET']
+    ENV['PLAID_PUBLIC_KEY'] = ENV['keep_PLAID_PUBLIC_KEY']
+    ENV['PLAID_ACCESS_TOKENS'] = ENV['keep_PLAID_ACCESS_TOKENS']
+
+    ENV.delete 'keep_PLAID_CLIENT_ID'
+    ENV.delete 'keep_PLAID_SECRET'
+    ENV.delete 'keep_PLAID_PUBLIC_KEY'
+    ENV.delete 'keep_PLAID_ACCESS_TOKENS'
   end
 
 

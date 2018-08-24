@@ -88,7 +88,6 @@ module Spendthrift
 
       def load_access_tokens_from_env
         if ENV.has_key? 'PLAID_ACCESS_TOKENS'
-          puts ENV['PLAID_ACCESS_TOKENS']
           ENV['PLAID_ACCESS_TOKENS'].split ':'
         else
           raise AccountAccessTokensError.new(
