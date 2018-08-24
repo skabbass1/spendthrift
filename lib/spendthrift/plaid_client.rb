@@ -47,7 +47,9 @@ module Spendthrift
           @accounts = get_savings_accounts
 
         else
-          raise AccountTypeError.new("account type #{account_type} not known. Use one of ['credit', 'savings', 'checking']")
+          raise AccountTypeError.new(
+              "account type #{account_type} not known. Use one of ['credit', 'savings', 'checking']"
+          )
         end
 
         get_transactions start_date: start_date, end_date: end_date, accounts: @accounts
@@ -110,6 +112,7 @@ module Spendthrift
 
       def get_transactions(start_date:, end_date:, accounts:)
 
+        # TODO: Need to add tests
         all_transactions = []
 
         accounts.each do |key_accounts_pair|
@@ -134,41 +137,13 @@ module Spendthrift
 
         end
 
-        sanitize all_transactions
+        all_transactions
 
-      end
-
-
-      def sanitize(transactions)
-        transactions = remove_pending_transactions transactions
-        remove_payments_and_refunds transactions
-        remove_unneeded_attributes transactions
-        combine_categories! transactions
-
-      end
-
-
-      def remove_pending_transactions(transactions)
-        transactions.select {|t| !t[:pending]}
-      end
-
-
-      def remove_payments_and_refunds(transactions)
-        transactions.select {|t| t[:amount] > 0}
-      end
-
-
-      def combine_categories!(transactions)
-        transactions.each {|t| t[:category] = t[:category].join '-'}
-      end
-
-
-      def remove_unneeded_attributes(transactions)
-        transactions.map {|t| {date: t[:date], amount: t[:amount], category: t[:category], vendor: t[:name]}}
       end
 
 
     end
+
 
   end
 
