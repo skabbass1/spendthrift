@@ -13,19 +13,16 @@ module Spendthrift
     end
 
 
-    def self.combine_categories!(transactions)
+    def self.join_categories!(transactions)
       transactions.each {|t| t[:category] = t[:category].join '-'}
     end
 
 
-    def self.remove_unneeded_attributes(transactions)
+    def self.select_attributes(transactions, *attributes)
       transactions.map do |t|
-        {
-            date: t[:date],
-            amount: t[:amount],
-            category: t[:category],
-            vendor: t[:name]
-        }
+
+        Hash[attributes.collect {|a| [a, t[a]]}]
+
       end
     end
   end
