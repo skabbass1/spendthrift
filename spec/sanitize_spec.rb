@@ -95,12 +95,13 @@ describe Spendthrift::DataSanitize do
 
     it 'returns the provided subset of attributes' do
       transactions = Spendthrift::DataSanitize.select_attributes @test_data,
+                                                                 :transaction_id,
                                                                  :date,
                                                                  :amount,
                                                                  :category,
                                                                  :name
       transactions.each do |t|
-        expect(t.keys).to contain_exactly :date, :amount, :category, :name
+        expect(t.keys).to contain_exactly :transaction_id,:date, :amount, :category, :name
       end
     end
   end
