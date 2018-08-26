@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spendthrift::DataSanitize do
 
 
-  before :context do
+  before :each do
     @test_data = [
         {
             amount: -345,
@@ -43,6 +43,19 @@ describe Spendthrift::DataSanitize do
         },
 
         {
+            amount: 5,
+            date: DateTime.new(2018, 8, 21),
+            category: ['Shops', 'Digital Purchase'],
+            pending: false,
+            name: 'Google',
+            payment_meta: {},
+            transaction_type: 'online',
+            category_id: 1236,
+            transaction_id: 4
+        },
+
+
+        {
             amount: 20,
             date: DateTime.new(2018, 8, 21),
             category: %w[Groceries],
@@ -51,7 +64,7 @@ describe Spendthrift::DataSanitize do
             payment_meta: {},
             transaction_type: 'place',
             category_id: 1237,
-            transaction_id: 4
+            transaction_id: 5
         }
 
     ]
@@ -101,8 +114,21 @@ describe Spendthrift::DataSanitize do
                                                                  :category,
                                                                  :name
       transactions.each do |t|
-        expect(t.keys).to contain_exactly :transaction_id,:date, :amount, :category, :name
+        expect(t.keys).to contain_exactly :transaction_id, :date, :amount, :category, :name
       end
+    end
+  end
+
+
+  describe '.add_vendor_name_to_vague_category' do
+
+
+    it 'appends vendor name to Shops only and Shops and Digital purchases category' do
+      Spendthrift::DataSanitize.add_vendor_name_to_vague_category! @test_data
+
+      expect(@test_data.select {|t| t[:transaction_id].eql? 3}[0][:category]).to eql %w[Shops Amazon]
+      expect(@test_data.select {|t| t[:transaction_id].eql? 4}[0][:category]).to eql ['Shops', 'Digital Purchase', 'Google']
+
     end
   end
 
