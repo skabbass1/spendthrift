@@ -31,36 +31,3 @@ module Spendthrift
     end
   end
 end
-
-
-# #def total_expenses_by_month(transactions)
-# grouped = transactions.group_by do |t|
-#   date = Date.parse(t['date'])
-#   [date.year, date.month]
-# end
-#
-# grouped.each do |date, t|
-#   total = t.map{|item| item['amount'] < 0 ? 0 :item['amount']}.reduce(:+)
-#   puts "date=#{date}  total=#{total}"
-#
-#   category_group=t.group_by do |g|
-#     g['category']
-#   end
-#
-#   category_group.each do |category, t|
-#     total = t.map{|item| item['amount'] < 0 ? 0 :item['amount']}.reduce(:+)
-#     puts "category=#{category}  total=#{total}"
-#   end
-#
-# end
-#
-#
-# end
-# #
-#
-#
-#
-#
-#
-#
-#
