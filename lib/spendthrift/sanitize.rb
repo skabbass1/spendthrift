@@ -8,8 +8,8 @@ module Spendthrift
     end
 
 
-    def self.remove_payments_and_refunds(transactions)
-      transactions.select {|t| t[:amount] > 0}
+    def self.remove_payments(transactions)
+      transactions.reject {|t| (t[:category] - %w[Transfer Credit]).empty?}
     end
 
 

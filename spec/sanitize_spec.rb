@@ -69,12 +69,12 @@ describe Spendthrift::DataSanitize do
   end
 
 
-  describe '.remove_payments_and_refunds' do
+  describe '.remove_payments' do
 
 
-    it 'removes negative amounts for payments and refunds' do
-      transactions = Spendthrift::DataSanitize.remove_payments_and_refunds @test_data
-      expect(transactions.select {|t| t[:amount] < 0}).to be_empty
+    it 'removes negative amounts for credit card payments' do
+      transactions = Spendthrift::DataSanitize.remove_payments @test_data
+      expect(transactions.select {|t| t[:category].eql? %w[Transfer Credit]}).to be_empty
 
     end
   end
