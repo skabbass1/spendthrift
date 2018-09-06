@@ -1,5 +1,4 @@
-require "spendthrift/version"
-
-module Spendthrift
-  # Your code goes here...
-end
+require 'spendthrift/version'
+require 'spendthrift/plaid_client'
+require 'spendthrift/sanitize'
+require 'spendthrift/reporting'

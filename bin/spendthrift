@@ -1,14 +1,61 @@
 #!/usr/bin/env ruby
 
-require "bundler/setup"
-require "spendthrift"
+require 'optparse/date'
 
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different spendthrift, if you like.
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '/../lib'))
+require 'spendthrift'
 
-# (If you use this, don't forget to add pry to your Gemfile!)
-# require "pry"
-# Pry.start
 
-require "irb"
-IRB.start(__FILE__)
+options = {}
+
+OptionParser.new do |opt|
+  opt.banner = 'Usage: ruby cli.rb [OPTIONS]'
+
+  opt.on('-s', '--start-date [START DATE]', Date, 'Transaction query start date') do |start_date|
+    options[:start_date] = start_date
+  end
+
+  opt.on('-e', '--end-date [END DATE]', Date, 'Transaction query end date') do |end_date|
+    options[:end_date] = end_date
+  end
+
+
+end.parse!
+
+options[:end_date] ||= DateTime.now
+
+
+def main(options)
+  transactions = get_transactions options[:start_date], options[:end_date]
+  transactions = sanitize_transactions transactions
+  report = generate_report transactions
+  upload_report report
+end
+
+
+def get_transactions(start_date, end_date)
+  client = Spendthrift::PlaidGateway::PlaidClient.new
+  client.get_account_transactions start_date: start_date,
+                                  end_date: end_date,
+                                  account_type: :credit
+
+end
+
+
+def sanitize_transactions(transactions)
+  Spendthrift::DataSanitize.sanitize transactions
+end
+
+
+def generate_report(transactions)
+  Spendthrift::Reporting.spending_per_month_by_category transactions
+end
+
+
+def upload_report(report)
+  require 'pp'
+  pp report
+end
+
+main options
+

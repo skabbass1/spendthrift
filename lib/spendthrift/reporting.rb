@@ -20,14 +20,14 @@ module Spendthrift
     end
 
 
-    private
-
-
     def self.group_by_year_month(transactions)
       transactions.group_by do |t|
         date = Date.parse t[:date]
         [date.year, date.month]
       end
     end
+
+
+    private_class_method :group_by_year_month
   end
 end
