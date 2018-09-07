@@ -20,6 +20,10 @@ module Spendthrift
     end
 
 
+    def self.convert_list_keys_to_string(report)
+      Hash[report.map {|k, v| [k.join, v]}]
+    end
+
     def self.group_by_year_month(transactions)
       transactions.group_by do |t|
         date = Date.parse t[:date]

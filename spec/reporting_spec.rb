@@ -50,12 +50,23 @@ describe Spendthrift::Reporting do
     it 'sums up monthly spending per category' do
       result = Spendthrift::Reporting.spending_per_month_by_category @test_data
 
+
       expect(result[[2018, 5]][["Shops", "Supermarkets and Groceries"]]).to eq(145)
       expect(result[[2018, 5]][["Food and Drink", "Restaurants"]]).to eq(100)
       expect(result[[2018, 6]][["Shops", "Digital Purchases"]]).to eq(4)
 
     end
 
+  end
+
+
+  describe '.convert_list_keys_to_string' do
+
+
+    it 'joins items in list to create string key' do
+      result = Spendthrift::Reporting.convert_list_keys_to_string [2018, 5] => {shops: 123}, [2018, 6] => {shops: 200}
+      expect(result).to eq({"20185" => {:shops => 123}, "20186" => {:shops => 200}})
+    end
   end
 
 end

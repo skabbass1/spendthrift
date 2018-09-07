@@ -48,13 +48,14 @@ end
 
 
 def generate_report(transactions)
-  Spendthrift::Reporting.spending_per_month_by_category transactions
+  report = Spendthrift::Reporting.spending_per_month_by_category transactions
+  Spendthrift::Reporting::convert_list_keys_to_string report
 end
 
 
 def upload_report(report)
-  require 'pp'
-  pp report
+ 
+
 end
 
 main options
