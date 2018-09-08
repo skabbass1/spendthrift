@@ -22,7 +22,7 @@ module Spendthrift
     end
 
 
-    def self.convert_list_keys_to_month_start_date_string(report)
+    def self.list_keys_to_month_start_date_string(report)
       Hash[report.map {|k, v| [Date.new(k[0], k[1]).strftime('%Y%m%d'), v]}]
     end
 

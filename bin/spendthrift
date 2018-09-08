@@ -49,7 +49,7 @@ end
 
 def generate_report(transactions)
   report = Spendthrift::Reporting.spending_per_month_by_category transactions
-  Spendthrift::Reporting::convert_list_keys_to_month_start_date_string report
+  Spendthrift::Reporting::list_keys_to_month_start_date_string report
 end
 
 
