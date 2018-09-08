@@ -19,17 +19,32 @@ OptionParser.new do |opt|
     options[:end_date] = end_date
   end
 
-  opt.on('u', '--[no-]upload', 'Upload to DB') do |upload|
+  opt.on('-u', '--[no-]upload', 'Upload to DB') do |upload|
     options[:upload] = upload
+  end
+
+
+  opt.on('-p', '--prev-month', 'Run report for previous month') do |prev_month|
+    options[:prev_month] = prev_month
   end
 
 
 end.parse!
 
+if options[:prev_month]
+  prev_month = Date.today.prev_month
+  prev_month_start = Date.new(prev_month.year, prev_month.month, 1)
+  prev_month_end = Date.new(prev_month.year, prev_month.month, -1)
+  options[:start_date] = prev_month_start
+  options[:end_date] ||= prev_month_end
 
-options[:start_date] ||= DateTime.now
-options[:end_date] ||= DateTime.now
+else
+  options[:start_date] ||= DateTime.now
+  options[:end_date] ||= DateTime.now
+end
 
+
+options[:upload] ||= false
 
 def main(options)
   transactions = get_transactions options[:start_date], options[:end_date]
