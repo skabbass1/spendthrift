@@ -7,8 +7,8 @@ module Spendthrift
     def self.sanitize(transactions)
       t = remove_pending_transactions transactions
       t = remove_payments t
-      join_categories! t
       add_vendor_name_to_vague_category! t
+      join_categories! t
       select_attributes t, :transaction_id, :name, :category, :date, :amount
 
     end

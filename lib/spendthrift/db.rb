@@ -10,10 +10,6 @@ module Spendthrift
 
 
     def self.load_report(report)
-      Aws.config.update({
-                            region: "us-west-2",
-                            endpoint: "http://localhost:8000"
-                        })
 
       dynamodb = Aws::DynamoDB::Client.new
 

@@ -19,6 +19,10 @@ OptionParser.new do |opt|
     options[:end_date] = end_date
   end
 
+  opt.on('u', '--[no-]upload', 'Upload to DB') do |upload|
+    options[:upload] = upload
+  end
+
 
 end.parse!
 
@@ -31,7 +35,7 @@ def main(options)
   transactions = get_transactions options[:start_date], options[:end_date]
   transactions = sanitize_transactions transactions
   report = generate_report transactions
-  upload_report report
+  upload_report report if options[:upload]
 end
 
 
