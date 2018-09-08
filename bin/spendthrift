@@ -22,6 +22,8 @@ OptionParser.new do |opt|
 
 end.parse!
 
+
+options[:start_date] ||= DateTime.now
 options[:end_date] ||= DateTime.now
 
 
@@ -54,8 +56,7 @@ end
 
 
 def upload_report(report)
- 
-
+  Spendthrift::DynamoDB.load_report report
 end
 
 main options
