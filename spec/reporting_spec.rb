@@ -64,8 +64,8 @@ describe Spendthrift::Reporting do
 
 
     it 'joins items in list to create string key' do
-      result = Spendthrift::Reporting.convert_list_keys_to_string [2018, 5] => {shops: 123}, [2018, 6] => {shops: 200}
-      expect(result).to eq({"20185" => {:shops => 123}, "20186" => {:shops => 200}})
+      result = Spendthrift::Reporting.convert_list_keys_to_month_start_date_string [2018, 5] => {shops: 123}, [2018, 6] => {shops: 200}
+      expect(result).to eq({"20180501" => {:shops => 123}, "20180601" => {:shops => 200}})
     end
   end
 
