@@ -2,6 +2,8 @@ PATH
   remote: .
   specs:
     spendthrift (0.1.0)
+      aws-sdk (~> 3)
+      plaid (~> 6.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -627,10 +629,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aws-sdk (~> 3)
   bundler (~> 1.16)
   byebug (~> 10.0.2)
-  plaid (~> 6.1.0)
   rake (~> 10.0)
   rspec (~> 3.8)
   spendthrift!

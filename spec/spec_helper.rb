@@ -1,4 +1,4 @@
-require "Date"
+require "date"
 require "spendthrift/plaid_client"
 require "spendthrift/sanitize"
 require "spendthrift/reporting"
