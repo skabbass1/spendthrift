@@ -21,4 +21,13 @@ task :package, [:name] do |t, args|
    f.puts
    f.puts "exec ruby bin/#{args[:name]} $@" 
   end
+ 
+  File.open("#{args[:name]}_lambda.py", 'w') do |f|
+    f.puts 'import subprocess'
+    f.puts
+    f.puts 'def launch_spendthrift_app(event, context):'
+    f.puts '    subprocess.run(["bin/run.sh", "-p", "u"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=event["timeout"], check=True)'
+  end
+
+  sh "zip -r #{args[:name]} bin lib ruby-env  #{args[:name]}_lambda.py } "
 end
