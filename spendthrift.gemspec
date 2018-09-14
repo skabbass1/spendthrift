@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.8"
   spec.add_development_dependency "byebug", "~> 10.0.2"
-  spec.add_runtime_dependency "aws-sdk", "~> 3"
+  spec.add_runtime_dependency "aws-sdk-dynamodb", "~> 1.0.0.rc7"
   spec.add_runtime_dependency "plaid", "~> 6.1.0"
 
 end
