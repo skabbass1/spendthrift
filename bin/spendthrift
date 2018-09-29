@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'optparse/date'
+require 'pp'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '/../lib'))
 require 'spendthrift'
@@ -51,6 +52,8 @@ def main(options)
   transactions = sanitize_transactions transactions
   report = generate_report transactions
   upload_report report if options[:upload]
+  pp report
+
 end
 
 
