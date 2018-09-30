@@ -10,4 +10,4 @@ COPY Gemfile.lock Gemfile.lock
 
 RUN bundle
 
-CMD  ["./bin/spendthrift"]
+ENTRYPOINT ["./bin/spendthrift"]
