@@ -69,4 +69,25 @@ describe Spendthrift::Reporting do
     end
   end
 
+  describe '.generate_html_report' do
+
+    before :example do
+      @sample_data = [
+                        {"20180801"=>
+                            {"Service-Telecommunication Services"=>114.44,
+                             "Food and Drink-Restaurants"=>241.41,
+                             "Shops-Clothing and Accessories-Women's Store"=>-31.23,
+                             "Shops-Supermarkets and Groceries"=>1477.2500000000002,
+                             "Shops-Amazon"=>184.19}
+                          }
+                      ]
+    end
+        it 'generates an html template' do
+          template = Spendthrift::Reporting.generate_html_report(@sample_data)
+          # TODO use nokogiri gem to parse html and text generated content
+          expect(template).to have_tag('table')
+        end
+
+  end
+
 end

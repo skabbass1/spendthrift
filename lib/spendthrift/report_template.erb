@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#report {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+#report td, #report th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+#report tr:nth-child(even){background-color: #f2f2f2;}
+#report tr:hover {background-color: #ddd;}
+#report th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+</style>
+</head>
+<body>
+<% data.each do |item| %>
+<table id="report">
+  <tr>
+    <th>Category</th>
+    <th>Amount</th>
+  </tr>
+  <% item.each do |date, expenses| %>
+    <% expenses.sort_by{ |k, v| v }.reverse.each do |category, amount| %>
+    <tr>
+      <td> <%= category %> </td>
+      <td> <%= amount %> </td>
+    </tr>
+    <% end %>
+  <% end %>
+</table>
+<% end %>
+</body>
+</html>
