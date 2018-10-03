@@ -84,8 +84,8 @@ describe Spendthrift::Reporting do
     end
         it 'generates an html template' do
           template = Spendthrift::Reporting.generate_html_report(@sample_data)
-          # TODO use nokogiri gem to parse html and text generated content
-          expect(template).to have_tag('table')
+          expect(Nokogiri.HTML(template).at("table")).not_to be(nil)
+
         end
 
   end
