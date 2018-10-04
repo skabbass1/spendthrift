@@ -74,7 +74,7 @@ describe Spendthrift::Reporting do
     before :example do
       @sample_data = [
                         {
-                          "20180801"=>
+                          "20180901"=>
                             {"Service-Telecommunication Services"=>114.44,
                              "Food and Drink-Restaurants"=>241.41,
                              "Shops-Clothing and Accessories-Women's Store"=>-31.23,
@@ -82,7 +82,7 @@ describe Spendthrift::Reporting do
                              "Shops-Amazon"=>184.19}
                         },
                         {
-                          "20180901"=>
+                          "20180801"=>
                             {"Service-Telecommunication Services"=>114.44,
                              "Food and Drink-Restaurants"=>241.41,
                              "Shops-Clothing and Accessories-Women's Store"=>-31.23,
@@ -95,6 +95,7 @@ describe Spendthrift::Reporting do
     it 'generates  html tables' do
         template = Spendthrift::Reporting.generate_html_report(@sample_data)
         expect(Nokogiri.HTML(template).search("table").length).to eq(2)
+        send_mail(content: template, subject: 'test_mail')
     end
   end
 
