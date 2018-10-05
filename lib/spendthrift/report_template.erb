@@ -23,20 +23,18 @@
 </style>
 </head>
 <body>
-<% data.each do |item| %>
+<% data.each do |date, report| %>
 <table id="report">
   <tr>
     <th>Category</th>
     <th>Amount</th>
   </tr>
-  <% item.each do |date, expenses| %>
+  <% report.each.sort_by{ |k, v| v }.reverse.each do |category, amount| %>
     <caption> <%= date %> </caption>
-    <% expenses.sort_by{ |k, v| v }.reverse.each do |category, amount| %>
     <tr>
       <td> <%= category %> </td>
       <td> <%= amount %> </td>
     </tr>
-    <% end %>
   <% end %>
 </table>
 <br>

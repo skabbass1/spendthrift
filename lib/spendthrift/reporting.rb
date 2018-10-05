@@ -1,5 +1,5 @@
 require 'date'
-
+require 'erb'
 module Spendthrift
 
   module Reporting

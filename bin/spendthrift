@@ -24,6 +24,9 @@ OptionParser.new do |opt|
     options[:upload] = upload
   end
 
+  opt.on('-m', '--[no-]email', 'Email Report') do |email|
+    options[:send_email] = email
+  end
 
   opt.on('-p', '--prev-month', 'Run report for previous month') do |prev_month|
     options[:prev_month] = prev_month
@@ -46,36 +49,46 @@ end
 
 
 options[:upload] ||= false
+options[:send_email] ||= false
 
 def main(options)
   transactions = get_transactions options[:start_date], options[:end_date]
   transactions = sanitize_transactions transactions
   report = generate_report transactions
   upload_report report if options[:upload]
+  send_email_report report_date_for_email(options[:start_date], options[:end_date]), report if options[:send_email]
   pp report
 
 end
-
 
 def get_transactions(start_date, end_date)
   client = Spendthrift::PlaidGateway::PlaidClient.new
   client.get_account_transactions start_date: start_date,
                                   end_date: end_date,
                                   account_type: :credit
-
 end
-
 
 def sanitize_transactions(transactions)
   Spendthrift::DataSanitize.sanitize transactions
 end
-
 
 def generate_report(transactions)
   report = Spendthrift::Reporting.spending_per_month_by_category transactions
   Spendthrift::Reporting::list_keys_to_month_start_date_string report
 end
 
+def to_html_report(report)
+  Spendthrift::Reporting::generate_html_report report
+end
+
+def send_email_report(report_date, report)
+  html_report = to_html_report report
+  Spendthrift::Mailer::send_mail content: html_report, subject: report_date
+end
+
+def report_date_for_email(start_date, end_date)
+  start_date == end_date ? "Report Date: #{start_date}": "Report Date: #{start_date} to #{end_date}"
+end
 
 def upload_report(report)
   Spendthrift::DynamoDB.load_report report
