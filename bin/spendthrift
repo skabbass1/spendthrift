@@ -87,7 +87,7 @@ def send_email_report(report_date, report)
 end
 
 def report_date_for_email(start_date, end_date)
-  start_date == end_date ? "Report Date: #{start_date}": "Report Date: #{start_date} to #{end_date}"
+  start_date == end_date ? "Expense Report For: #{start_date}": "Report Date: #{start_date} to #{end_date}"
 end
 
 def upload_report(report)
