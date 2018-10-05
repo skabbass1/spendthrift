@@ -38,9 +38,8 @@ end.parse!
 if options[:prev_month]
   prev_month = Date.today.prev_month
   prev_month_start = Date.new(prev_month.year, prev_month.month, 1)
-  prev_month_end = Date.new(prev_month.year, prev_month.month, -1)
   options[:start_date] = prev_month_start
-  options[:end_date] ||= prev_month_end
+  options[:end_date] ||= DateTime.now
 
 else
   options[:start_date] ||= DateTime.now
