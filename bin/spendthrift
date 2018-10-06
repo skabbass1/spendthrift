@@ -63,8 +63,8 @@ end
 def get_transactions(start_date, end_date)
   client = Spendthrift::PlaidGateway::PlaidClient.new
   client.get_account_transactions start_date: start_date,
-                                  end_date: end_date,
-                                  account_type: :credit
+    end_date: end_date,
+    account_type: :credit
 end
 
 def sanitize_transactions(transactions)
@@ -86,7 +86,9 @@ def send_email_report(report_date, report)
 end
 
 def report_date_for_email(start_date, end_date)
-  start_date == end_date ? "Expense Report For: #{start_date}": "Report Date: #{start_date} to #{end_date}"
+  start_date = start_date.strftime "%b-%Y"
+  end_date = end_date.strftime "%b-%Y"
+  start_date == end_date ? "Expense Report: #{start_date}": "Expense Report: #{start_date} to #{end_date}"
 end
 
 def upload_report(report)
