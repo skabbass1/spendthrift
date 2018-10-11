@@ -6,12 +6,9 @@ module Spendthrift
 
   module PlaidGateway
 
-    class CredentialsError < StandardError
+    class VaultError < StandardError
     end
 
-
-    class AccountAccessTokensError < StandardError
-    end
 
     class AccountTypeError < StandardError
     end
@@ -23,15 +20,13 @@ module Spendthrift
 
 
       def initialize
+          secrets  = load_secrets_from_vault
+          @raw_client = Plaid::Client.new(env: :development,
+                                          client_id: secrets[:PLAID_CLIENT_ID],
+                                          secret: secrets[:PLAID_SECRET],
+                                          public_key: secrets[:PLAID_PUBLIC_KEY])
 
-
-        client_id, secret, public_key = load_credentials_from_env
-        @raw_client = Plaid::Client.new(env: :development,
-                                        client_id: client_id,
-                                        secret: secret,
-                                        public_key: public_key)
-
-        @access_tokens = load_access_tokens_from_env
+          @access_tokens = secrets[:PLAID_ACCESS_TOKENS].split ':'
 
       end
 
@@ -61,7 +56,6 @@ module Spendthrift
         get_accounts_by_type 'credit', 'credit card'
       end
 
-
       def get_savings_accounts
         get_accounts_by_type 'depository', 'savings'
       end
@@ -75,29 +69,15 @@ module Spendthrift
       private
 
 
-      def load_credentials_from_env
-        credentials = ENV['PLAID_CLIENT_ID'], ENV['PLAID_SECRET'], ENV['PLAID_PUBLIC_KEY']
-        if credentials.any? {|c| c.nil?}
-          raise CredentialsError.new(
-              'PLAID_CLIENT_ID, PLAID_SECRET and PLAID_PUBLIC_KEY must be set as environment variables'
+      def load_secrets_from_vault
+        secrets = (Spendthrift::Secrets.get_secrets)[:app]
+        if secrets.nil?
+          raise VaultError.new(
+            'app secrets not found in vault'
           )
         end
-
-        credentials
-
+        secrets
       end
-
-
-      def load_access_tokens_from_env
-        if ENV.has_key? 'PLAID_ACCESS_TOKENS'
-          ENV['PLAID_ACCESS_TOKENS'].split ':'
-        else
-          raise AccountAccessTokensError.new(
-              'Account access tokens must be set in the PLAID_ACCESS_TOKENS environment variable'
-          )
-        end
-      end
-
 
       def get_accounts_by_type(type, subtype)
         @access_tokens.map do |token|

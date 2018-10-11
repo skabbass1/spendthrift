@@ -90,7 +90,6 @@ describe Spendthrift::Reporting do
 
     it 'generates  html tables' do
         template = Spendthrift::Reporting.generate_html_report(@sample_data)
-        File.open('test.html', 'w') {|f| f.puts template}
         expect(Nokogiri.HTML(template).search("table").length).to eq(2)
     end
   end
