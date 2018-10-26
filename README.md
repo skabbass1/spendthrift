@@ -11,7 +11,7 @@ Spendthrift is a personal expense tracking application. It uses the [Plaid](http
 ## Usage
 Run ./bin/spendthrift -h to see help options
 
-##Note
+##Note##
 I wrote this app as a personal tool for my own needs. It is not intended to be a generic tool supporting multiple expense tracking use cases. Having said that, feel free to clone it and modify it to suite your own needs
 
 
