@@ -5,8 +5,6 @@ module Spendthrift
 
   module Secrets
 
-    VAULT_LOCATION = "http://127.0.0.1:8200/v1/secret/"
-
     def self.get_secrets
       app = get_secrets_at_path(app_secrets_path)
       aws = get_secrets_at_path(aws_secrets_path)
@@ -26,11 +24,11 @@ module Spendthrift
     end
 
     def self.aws_secrets_path
-      "#{VAULT_LOCATION}/aws"
+      "#{ENV['VAULT_LOCATION']}/aws"
     end
 
     def self.app_secrets_path
-      "#{VAULT_LOCATION}/spendthrift"
+      "#{ENV['VAULT_LOCATION']}/spendthrift"
     end
   end
 end
